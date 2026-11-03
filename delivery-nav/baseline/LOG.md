@@ -57,4 +57,9 @@ Bicycle, LandmarkMap, RangeBearingSensor, EKF (from roboticstoolbox)
 \- Nhan xet: d=10 muot nhung cat goc (khop slide). d=1 KHONG khop slide (slide: bam sat nhung giat); nguyen nhan co the: d < WB=2.9 nen do loi lai lon.
 
 \- Canh bao: EKF PythonRobotics co ComplexWarning o utils/plot.py dong 38-40 (numpy 2.5.3), khong sua ma goc.
-
+## 2026-11-03 | <ten ban> | Kiem chung tham so xe
+- Nguon: help(bd.BICYCLE) trong bdsim (RVC3), mac dinh L=1, steer_max=0.45*pi, speed_max/accel_max=inf
+- drivepoint_check.py dung dung L=1, psi_max=0.45*pi -> tham so da kiem chung
+- drivepoint.py cua tac gia: pgoal=[5,5], qs=[5,2,0], Kv=0.5, Kh=1.5 (KHAC slide: qs=[8,5,pi/2], Kh=2)
+- EKF PythonRobotics: hoat hinh hien, co ComplexWarning vo hai o utils/plot.py
+- Chua giai thich: quy dao xy cua script (y max ~5.3) khong cong nhu hinh slide (~5.6)
