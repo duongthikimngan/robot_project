@@ -1,0 +1,54 @@
+--- cell 6
+V = np.diag([0.02, np.deg2rad(0.5)]) ** 2;
+--- cell 7
+robot = Bicycle(covar=V, animation="car")
+--- cell 15
+x_sdev = [0.05, 0.05, np.deg2rad(0.5)];
+P0 = np.diag(x_sdev) ** 2;
+--- cell 16
+ekf = EKF(robot=(robot, V), P0=P0)
+--- cell 24
+map = LandmarkMap(20, workspace=10)
+--- cell 26
+W = np.diag([0.1, np.deg2rad(1)]) ** 2;
+--- cell 27
+sensor = RangeBearingSensor(robot=robot, map=map, covar=W,  
+           angle=[-pi/2, pi/2], range=4, plot=True)
+--- cell 30
+map = LandmarkMap(20, workspace=10);
+V = np.diag([0.02, np.deg2rad(0.5)]) ** 2
+robot = Bicycle(covar=V, animation="car");
+robot.control = RandomPath(workspace=map, seed=0)
+W = np.diag([0.1, np.deg2rad(1)]) ** 2
+sensor = RangeBearingSensor(robot=robot, map=map, covar=W, 
+           angle=[-pi/2, pi/2], range=4, seed=0, plot=True);
+P0 = np.diag([0.05, 0.05, np.deg2rad(0.5)]) ** 2;
+ekf = EKF(robot=(robot, V), P0=P0, map=map, sensor=(sensor, W));
+--- cell 34
+map = LandmarkMap(20, workspace=10, seed=0);
+robot = Bicycle(covar=V, animation="car");
+robot.control = RandomPath(workspace=map);
+W = np.diag([0.1, np.deg2rad(1)]) ** 2
+sensor = RangeBearingSensor(robot=robot, map=map, covar=W, 
+           range=4, angle=[-pi/2, pi/2], plot=True);
+ekf = EKF(robot=(robot, None), sensor=(sensor, W));
+--- cell 41
+map = LandmarkMap(20, workspace=10);
+W = np.diag([0.1, np.deg2rad(1)]) ** 2 
+robot = Bicycle(covar=V, x0=(3, 6, np.deg2rad(-45)), 
+          animation="car");
+robot.control = RandomPath(workspace=map);
+W = np.diag([0.1, np.deg2rad(1)]) ** 2
+sensor = RangeBearingSensor(robot=robot, map=map, covar=W, 
+           range=4, angle=[-pi/2, pi/2], plot=True);
+P0 = np.diag([0.05, 0.05, np.deg2rad(0.5)]) ** 2;
+ekf = EKF(robot=(robot, V), P0=P0, sensor=(sensor, W));
+--- cell 58
+map = LandmarkMap(20, workspace=10);
+--- cell 59
+V = np.diag([0.02, np.deg2rad(0.5)]) ** 2;
+robot = Bicycle(covar=V, animation="car", workspace=map);
+robot.control = RandomPath(workspace=map)
+--- cell 60
+W = np.diag([0.1, np.deg2rad(1)]) ** 2;
+sensor = RangeBearingSensor(robot, map, covar=W, plot=True);

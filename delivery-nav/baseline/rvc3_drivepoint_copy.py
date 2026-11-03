@@ -33,7 +33,7 @@ pos_error = bd.SUM("+-")
 d2goal = bd.FUNCTION(lambda d: math.sqrt(d[0] ** 2 + d[1] ** 2))
 h2goal = bd.FUNCTION(lambda d: math.atan2(d[1], d[0]))
 heading_error = bd.SUM("+-", mode="c")
-Kv = bd.GAIN(0.5)
+Kv = bd.GAIN(4)
 Kh = bd.GAIN(2)
 bike = bd.BICYCLE(x0=qs, name="vehicle")
 vplot = bd.VEHICLEPLOT(
