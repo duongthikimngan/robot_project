@@ -1,0 +1,64 @@
+Help on method block_init_wrapper in module bdsim.run_sim:
+
+block_init_wrapper(*args: 'Any', **kwargs: 'Any') -> 'Any' method of bdsim.run_sim.BDSim instance
+    :blockname:`VEHICLEPLOT`
+    
+    Vehicle animation
+    
+    :inputs: 1
+    :outputs: 0
+    :states: 0
+    
+    .. list-table::
+        :header-rows: 1
+    
+        *   - Port type
+            - Port number
+            - Types
+            - Description
+        *   - Input
+            - 0
+            - float
+            - :math:`\mathit{q} = (x, y, \theta)`, vehicle configuration
+    
+    Create a vehicle animation similar to the figure below.
+    
+    .. figure:: ../figs/rvc4_4.gif
+        :width: 500px
+        :alt: example of generated graphic
+    
+        Example of vehicle display (animated).  The label at the top is the
+        block name.
+    
+    :param animation: Graphical animation of vehicle, defaults to None
+    :type animation: VehicleAnimation subclass, optional
+    :param path: linestyle to plot path taken by vehicle, defaults to None
+    :type path: str or dict, optional
+    :param labels: axis labels (xlabel, ylabel), defaults to ["X","Y"]
+    :type labels: array_like(2) or list
+    :param square: Set aspect ratio to 1, defaults to True
+    :type square: bool, optional
+    :param init: function to initialize graphics, defaults to None
+    :type init: callable, optional
+    :param scale: scale of plot, defaults to "auto"
+    :type scale: list or str, optional
+    :param shape: shape of vehicle, passed to animation, defaults to None
+    :type shape: array_like, optional
+    :param size: size of vehicle, passed to animation, defaults to None
+    :type size: float or array_like, optional
+    :param polyargs: arguments passed to :meth:`Animation.Polygon`
+    :type polyargs: dict
+    :param blockargs: |GraphicsBlockOptions|
+    :type blockargs: dict
+    
+    .. note::
+    
+        - The ``init`` function is called after the axes are initialized
+          and can be used to draw application specific detail on the
+          plot. In the example below, this is the dot and star.
+        - If an ``animation`` object is not provided then a default polygon animation is
+          created.  It's size and shape can be set by the ``size`` and ``shape`` parameters, which are passed to the animation object,
+          or a dictionary of arguments ``polyargs`` which is passed to the default animation object.
+        - A dynamic trail, showing path to date can be animated if
+          the option ``path`` is set to a linestyle.
+
