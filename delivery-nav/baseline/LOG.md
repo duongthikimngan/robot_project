@@ -99,3 +99,17 @@ Bicycle, LandmarkMap, RangeBearingSensor, EKF (from roboticstoolbox)
   cảm biến chỉ thấy ~1 landmark mỗi lúc (mật độ 0,05 landmark/m², tầm 4 m, nửa vòng)
 - Đối chiếu slide Ch.4 §4.5: <khớp / không khớp. Ghi dạng Pnorm quan sát được:
   nhóm A tăng dần?, nhóm B răng cưa?>
+
+## A* PythonRobotics
+- Nguon: PathPlanning/AStar/a_star.py, commit 8c39289
+- Chay: python a_star.py (moi truong pyrobotics), anh pyrobotics_astar_default_2026-11-03.png
+- Tham so doc tu code: grid_size=<..>, robot_radius=<..>, so huong di chuyen=<..>
+- Nhan xet: duong di <co/khong> vong quanh vat can; <co bac thang/goc vuong khong>
+- Ghi chu cho Giai doan 2: duong A* luoi can lam muot truoc khi dua vao Pure Pursuit
+
+## Giai doan 2 - A* tu viet (2026-11-04)
+- Nguon: viet moi, src/astar.py (tham khao y tuong A* chung, khong sao chep ma)
+- Thiet ke: 8 huong, chi phi cheo sqrt(2), khong cat goc, heuristic octile, chay tren ban do da phong 1.0 m
+- Kiem thu: experiments/test_astar.py -> <ket qua that>
+- Tuyen 6 diem giao: <so diem>, <tong do dai> m; anh results/astar_raw_corridor_2026-11-04.png
+- Nhan xet: <co bac thang/goc vuong o dau>
