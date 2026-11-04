@@ -15,6 +15,19 @@ class GridMap:
         j0, j1 = int(y0 / self.res), int(np.ceil(y1 / self.res))
         self.occ[max(j0, 0):j1, max(i0, 0):i1] = True
 
+    def add_circle(self, cx, cy, r):
+        xs = (np.arange(self.n) + 0.5) * self.res
+        X, Y = np.meshgrid(xs, xs)
+        self.occ |= (X - cx) ** 2 + (Y - cy) ** 2 <= r ** 2
+
+    def add_ellipse(self, cx, cy, a, b, angle=0.0):
+        xs = (np.arange(self.n) + 0.5) * self.res
+        X, Y = np.meshgrid(xs, xs)
+        c, s = np.cos(angle), np.sin(angle)
+        u = (X - cx) * c + (Y - cy) * s
+        v = -(X - cx) * s + (Y - cy) * c
+        self.occ |= (u / a) ** 2 + (v / b) ** 2 <= 1.0
+
     def add_border(self, thickness=1.0):
         t = int(round(thickness / self.res))
         self.occ[:t, :] = self.occ[-t:, :] = True
