@@ -113,3 +113,10 @@ Bicycle, LandmarkMap, RangeBearingSensor, EKF (from roboticstoolbox)
 - Kiem thu: experiments/test_astar.py -> <ket qua that>
 - Tuyen 6 diem giao: <so diem>, <tong do dai> m; anh results/astar_raw_corridor_2026-11-04.png
 - Nhan xet: <co bac thang/goc vuong o dau>
+
+## Giai doan 2 - lam muot (2026-11-04)
+- src/smooth.py: line-of-sight tham lam + noi suy deu 0.5 m; ghim 2 dau ve diem giao chinh xac
+- Ket qua: 93.36 m -> 92.30 m; 188 -> 190 diem; test_smooth.py PASS
+- Anh: results/astar_raw_corridor_2026-11-04.png, results/astar_smooth_corridor_2026-11-04.png
+- Nhan xet: <mo ta hinh sau lam muot, doan 1->2 con gap khuc may cho>
+- Han che: goc vuong o diem giao 3 va 4 con nguyen, chua bo tron
