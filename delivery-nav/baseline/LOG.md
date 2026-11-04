@@ -120,3 +120,9 @@ Bicycle, LandmarkMap, RangeBearingSensor, EKF (from roboticstoolbox)
 - Anh: results/astar_raw_corridor_2026-11-04.png, results/astar_smooth_corridor_2026-11-04.png
 - Nhan xet: <mo ta hinh sau lam muot, doan 1->2 con gap khuc may cho>
 - Han che: goc vuong o diem giao 3 va 4 con nguyen, chua bo tron
+
+## GD4 - hieu chinh nhieu odometry (corridor, 15 seed)
+- Truoc: 0.26 / 0.78 / 2.06 m; nhan k_d, c_th voi 1.9
+- Sau: low 0.50, mid 1.48, high 3.84 m (muc tieu 0.5/1.5/4.0, +-30%)
+- c_th (deg/sqrt m): 0.095 / 0.285 / 0.76; k_d: 0.038 / 0.095 / 0.19
+- Kiem tra open: 0.76 / 2.25 / 5.81 m (tuyen dai hon, sai so lon hon)

@@ -21,9 +21,9 @@ class OdomNoise:
 
 LEVELS = {
     "none": OdomNoise("none", 0.0, 0.0),
-    "low":  OdomNoise("low",  0.02, np.deg2rad(0.05)),
-    "mid":  OdomNoise("mid",  0.05, np.deg2rad(0.15)),
-    "high": OdomNoise("high", 0.10, np.deg2rad(0.40)),
+    "low":  OdomNoise("low",  0.038, np.deg2rad(0.095)),
+    "mid":  OdomNoise("mid",  0.095, np.deg2rad(0.285)),
+    "high": OdomNoise("high", 0.19,  np.deg2rad(0.76)),
 }
 
 
