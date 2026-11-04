@@ -36,3 +36,27 @@ ban do luoi -> phong vat can (inflate) -> A\* giua tung cap diem giao
 
 \- Moi mo hinh xe: bicycle dong hoc voi gioi han goc lai.
 
+
+
+
+
+\## Vòng lặp một bước thời gian (Giai đoạn 4-5)
+
+1\. Bộ bám đường nhận pose ĐIỀU KHIỂN q\_ctrl và cho lệnh (v, ψ).
+
+2\. Xe THẬT cập nhật chính xác theo lệnh (có giới hạn v, ψ): q\_true.
+
+3\. Odometry thật (d, dθ) lấy từ thay đổi của q\_true; thêm nhiễu → odometry ĐO (d\_m, dθ\_m).
+
+4\. Bộ định vị cập nhật từ odometry đo:
+
+&#x20;  - dead reckoning: q\_est = f(q\_est, d\_m, dθ\_m)
+
+&#x20;  - EKF: dự đoán bằng odometry đo, cập nhật bằng quan sát landmark
+
+5\. q\_ctrl = q\_est (chế độ dr / ekf) hoặc q\_true (chế độ truth, chỉ để hiệu chỉnh).
+
+Quy tắc: cte, va chạm, tỉ lệ giao hàng tính trên q\_true. Logic chuyển điểm giao kế tiếp
+
+của bộ bám dùng q\_ctrl, KHÔNG dùng q\_true.
+

@@ -1,0 +1,4 @@
+d,law,success,n_reached,n_junctions,time,cte_rms,cte_max,t_cte_max,miss_max,steer_rate,v_mean,min_clearance,collisions
+1,geometric,1,4,4,38.7,0.141,0.386,16.6,0.483,0.0092,0.758,,
+5,geometric,0,1,4,58.2,0.441,1.078,14.0,1.525,0.0016,0.629,,
+10,geometric,0,1,4,83.6,0.855,2.149,15.3,3.061,0.0003,0.397,,

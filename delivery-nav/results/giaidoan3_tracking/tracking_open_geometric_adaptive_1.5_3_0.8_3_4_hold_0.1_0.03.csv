@@ -1,0 +1,2 @@
+d,law,success,n_reached,n_junctions,time,cte_rms,cte_max,t_cte_max,miss_max,miss_mean,steer_rate,v_mean,d_mean,d_min,min_clearance,collisions
+adaptive,geometric,1,5,5,139.9,0.317,1.419,112.2,0.473,0.354,0.0044,0.868,2.1,1.5,1.118,0

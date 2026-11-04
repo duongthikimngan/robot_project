@@ -2,7 +2,7 @@ import sys, os, math
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np
 import matplotlib.pyplot as plt
-from src import maps
+from src.maps import maps
 from src.astar import astar
 from src.smooth import shortcut, resample
 

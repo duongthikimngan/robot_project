@@ -1,0 +1,2 @@
+d,law,success,n_reached,n_junctions,time,cte_rms,cte_max,t_cte_max,miss_max,miss_mean,steer_rate,v_mean,d_mean,d_min,min_clearance,collisions,loc,noise,seed,loc_err_end,loc_err_rms
+1.5,geometric,1,5,5,96.2,0.067,0.312,63.7,0.441,0.221,0.0037,0.937,1.5,1.5,1.118,0,none,none,0,0.0,0.0
