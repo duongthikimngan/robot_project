@@ -8,7 +8,9 @@ import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parents[1]
 D = ROOT / "results" / "giaidoan5_experiment"
-FILES = {"DR": "exp_corridor_lm8_d1.5_tu8_dronly.csv", "EKF lm8": "exp_corridor_lm8_d1.5_tu8.csv"}
+FILES = {"DR": "exp_corridor_lm8_d1.5_tu8_dronly.csv",
+         "EKF lm8": "exp_corridor_lm8_d1.5_tu8.csv",
+         "EKF lm3 r4": "exp_corridor_lm3_r4_d1.5_tu8.csv"}
 COL = dict(noise="noise", tracker="tracker", success="success", miss="miss_max", coll="collisions")
 LEVELS = ["low", "mid", "high"]
 R = np.arange(0.5, 1.501, 0.05)
@@ -19,6 +21,7 @@ for lab, f in FILES.items():
     df = pd.read_csv(D / f)
     if COL["tracker"] in df.columns:
         df = df[df[COL["tracker"]] == "fixed"]
+        df = df[df["loc"] == ("dr" if lab == "DR" else "ekf")]
     ok = ((df[COL["miss"]] < R_REACH) & (df[COL["coll"]] == 0)).astype(int)
     print(f"{lab}: lệch so với cột success đã lưu = {int((ok != df[COL['success']]).sum())} dòng")
     for ax, lv in zip(axs, LEVELS):

@@ -19,7 +19,7 @@ FILES = {
     "EKF lm8":    "exp_corridor_lm8_d1.5_tu8.csv",
     "EKF lm8 r4": "exp_corridor_lm8_r4_d1.5_tu8.csv",
 }
-COL = dict(noise="noise", tracker="tracker", success="success", loc="loc_err_rms")
+COL = dict(noise="noise", tracker="tracker", success="success", loc="loc_err_rms", localizer="loc")
 LEVELS = ["low", "mid", "high"]
 
 
@@ -39,6 +39,8 @@ def load():
         df = pd.read_csv(D / f)
         if COL["tracker"] in df.columns:
             df = df[df[COL["tracker"]] == "fixed"]
+        df = df[df[COL["localizer"]] == ("dr" if lab == "DR" else "ekf")]
+        print(lab, df.groupby(COL["noise"], observed=True).size().to_dict())   # phải là 30 mỗi mức
         out[lab] = df
     first = next(iter(out.values()))
     print("cột:", list(first.columns))
