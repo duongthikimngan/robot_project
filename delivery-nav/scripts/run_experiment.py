@@ -3,9 +3,10 @@ Mỗi seed chạy cả BỐN tổ hợp trong cùng vòng lặp -> cùng chuỗi
 
     python scripts/run_experiment.py --map corridor --lm lm8 --seeds 30
     python scripts/run_experiment.py --map corridor --lm lm8 --seeds 5 --noise mid      # chạy thử nhanh
+    python scripts/run_experiment.py --map mixed --loc dr --noise low                   # chỉ dead reckoning
 
 Bộ thích nghi lấy từ run_tracking.ADAPT (đóng băng trước khi chạy). Đầu ra:
-results/giaidoan5_experiment/exp_<map>_<lm>.csv, bảng tổng hợp, kiểm định ghép cặp, boxplot.
+results/giaidoan5_experiment/exp_<map>_<lm>_d<d>[_tu<tau_up>].csv, bảng tổng hợp, kiểm định ghép cặp, boxplot.
 """
 import argparse, sys
 from pathlib import Path
@@ -74,22 +75,28 @@ def main():
     ap.add_argument("--seeds", type=int, default=30)
     ap.add_argument("--noise", nargs="+", default=["low", "mid", "high"])
     ap.add_argument("--d", type=float, default=1.5, help="look-ahead cố định (d*)")
+    ap.add_argument("--tau_up", type=float, default=None, help="ghi đè ADAPT['tau_up']")
+    ap.add_argument("--loc", nargs="+", default=["dr", "ekf"], choices=["dr", "ekf"])
     a = ap.parse_args()
+    if a.tau_up is not None:
+        rt.ADAPT = {**rt.ADAPT, "tau_up": a.tau_up}
     path, junctions, clearance = rt.get_route(a.map)
     out_dir = ROOT / "results" / "giaidoan5_experiment"; out_dir.mkdir(parents=True, exist_ok=True)
-    print("ADAPT =", rt.ADAPT, "| d cố định =", a.d)
+    print("ADAPT =", rt.ADAPT, "| d cố định =", a.d, "| loc =", a.loc)
 
     rows = []
     for noise in a.noise:
         for seed in range(a.seeds):
             for tracker in TRACKERS:
-                for loc in LOCS:
+                for loc in a.loc:
                     rows.append(dict(cfg=a.lm, **run_one(path, junctions, clearance, a.map, tracker, loc,
                                                          noise, seed, a.lm, a.d)))
         print(f"  xong nhiễu {noise}")
     df = pd.DataFrame(rows)
     df["noise"] = pd.Categorical(df["noise"], categories=a.noise, ordered=True)
-    f_csv = out_dir / f"exp_{a.map}_{a.lm}_d{a.d:g}.csv"; df.to_csv(f_csv, index=False); print("Đã lưu", f_csv)
+
+    tag = f"_tu{a.tau_up:g}" if a.tau_up is not None else ""
+    f_csv = out_dir / f"exp_{a.map}_{a.lm}_d{a.d:g}{tag}.csv"; df.to_csv(f_csv, index=False); print("Đã lưu", f_csv)
 
     metrics = ["success", "cte_rms", "cte_max", "miss_max", "steer_rate", "time",
                "loc_err_rms", "loc_err_max", "collisions"]
@@ -101,15 +108,16 @@ def main():
     pm = ["cte_rms", "cte_max", "steer_rate", "success"]
     print("\n[1] THÍCH NGHI so với CỐ ĐỊNH (a = adaptive, b = fixed; median_diff < 0 nghĩa là thích nghi nhỏ hơn):")
     print(paired_table(df, "tracker", "adaptive", "fixed", ["noise", "loc"], pm).to_string(index=False, float_format=lambda x: f"{x:.3g}"))
-    pm2 = ["cte_rms", "cte_max", "success", "loc_err_max"]
-    print("\n[2] EKF so với DEAD RECKONING (a = ekf, b = dr; median_diff < 0 nghĩa là EKF nhỏ hơn):")
-    print(paired_table(df, "loc", "ekf", "dr", ["noise", "tracker"], pm2).to_string(index=False, float_format=lambda x: f"{x:.3g}"))
+    if set(a.loc) >= {"dr", "ekf"}:
+        pm2 = ["cte_rms", "cte_max", "success", "loc_err_max"]
+        print("\n[2] EKF so với DEAD RECKONING (a = ekf, b = dr; median_diff < 0 nghĩa là EKF nhỏ hơn):")
+        print(paired_table(df, "loc", "ekf", "dr", ["noise", "tracker"], pm2).to_string(index=False, float_format=lambda x: f"{x:.3g}"))
 
     fig, axs = plt.subplots(1, len(a.noise), figsize=(5 * len(a.noise), 4.5), squeeze=False, sharey=True)
     for ax, noise in zip(axs[0], a.noise):
         data, labels = [], []
         for tracker in TRACKERS:
-            for loc in LOCS:
+            for loc in a.loc:
                 s = df[(df.noise == noise) & (df.tracker == tracker) & (df["loc"] == loc)]
                 data.append(s["cte_rms"].values); labels.append(f"{tracker}\n{loc}")
         ax.boxplot(data)
@@ -117,7 +125,7 @@ def main():
         ax.set_xticklabels(labels)
         ax.set_title(f"nhiễu {noise}"); ax.grid(alpha=.3)
     axs[0][0].set_ylabel("cte_rms (m), so với pose THẬT"); plt.tight_layout()
-    f_png = out_dir / f"box_cte_{a.map}_{a.lm}_d{a.d:g}.png"; plt.savefig(f_png, dpi=130); print("Đã lưu", f_png)
+    f_png = out_dir / f"box_cte_{a.map}_{a.lm}_d{a.d:g}{tag}.png"; plt.savefig(f_png, dpi=130); print("Đã lưu", f_png)
 
 
 if __name__ == "__main__":

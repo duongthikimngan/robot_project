@@ -7,9 +7,6 @@ Look-ahead:
    - thích nghi theo độ cong (adaptive=dict(d_min, d_max, c, look, tau_up)):
         d_raw = clip(c / kappa_max, d_min, d_max), kappa_max = độ cong lớn nhất trong `look` mét phía trước
         d giảm NGAY khi sắp vào góc, tăng từ từ với hằng số thời gian tau_up (tránh d nhảy)
-   - giữ d nhỏ sau góc (tuỳ chọn, bật khi adaptive có thêm psi_release và cte_release):
-        sau khi vào góc, giữ d = d_min cho đến khi |psi| < psi_release * psi_max
-        và cte < cte_release (xe đã sửa xong), hoặc quá hold_max giây (mặc định 10 s)
 """
 import numpy as np
 from .vehicle import wrap
@@ -50,8 +47,6 @@ class PurePursuit:
         self.ad, self.dt = adaptive, dt
         self.d_f = None          # d đã lọc (chế độ thích nghi)
         self.d_cur = d           # d đang dùng ở bước gần nhất (để ghi log)
-        self.psi_last = 0.0      # góc lái ở bước trước (cho điều kiện nhả hold)
-        self.hold, self.hold_t = False, 0.0
         if adaptive:
             self.kap = curvature(self.ref)
 
@@ -64,25 +59,11 @@ class PurePursuit:
         s_t = min(self.s[self.j] + d, self.s[-1])
         return np.array([np.interp(s_t, self.s, self.ref[:, 0]), np.interp(s_t, self.s, self.ref[:, 1])])
 
-    def adaptive_d(self, cte=0.0):
+    def adaptive_d(self):
         a = self.ad
         i1 = int(np.searchsorted(self.s, self.s[self.j] + a["look"]))
         kmax = float(self.kap[self.j:max(i1, self.j + 1)].max())
         d_raw = float(np.clip(a["c"] / max(kmax, 1e-3), a["d_min"], a["d_max"]))
-
-        # giữ d nhỏ cho đến khi xe sửa xong (chỉ bật khi có psi_release trong tham số)
-        if "psi_release" in a:
-            if d_raw <= a["d_min"] + 1e-6:                   # đang ở góc cua
-                self.hold, self.hold_t = True, 0.0
-            elif self.hold:
-                self.hold_t += self.dt
-                settled = (abs(self.psi_last) < a["psi_release"] * self.psi_max
-                           and cte < a["cte_release"])
-                if settled or self.hold_t > a.get("hold_max", 10.0):   # chốt chặn 10 s
-                    self.hold = False
-            if self.hold:
-                d_raw = a["d_min"]
-
         if self.d_f is None or d_raw < self.d_f:
             self.d_f = d_raw                                                    # giảm ngay trước khi vào góc
         else:
@@ -92,8 +73,7 @@ class PurePursuit:
     def __call__(self, pose, d=None):
         self.nearest(pose[:2])                       # nearest chạy trước để có chỉ số j
         if d is None:
-            cte = float(np.hypot(*(self.ref[self.j] - pose[:2])))   # cte theo pose điều khiển
-            d = self.adaptive_d(cte) if self.ad else self.d
+            d = self.adaptive_d() if self.ad else self.d
         self.d_cur = d
         tgt = self.target(d)
         alpha = wrap(np.arctan2(tgt[1] - pose[1], tgt[0] - pose[0]) - pose[2])
@@ -102,9 +82,7 @@ class PurePursuit:
             psi = np.arctan2(2 * self.L * np.sin(alpha), ld)
         else:
             psi = self.kh * alpha
-        psi = float(np.clip(psi, -self.psi_max, self.psi_max))
-        self.psi_last = psi
-        return psi, alpha, tgt
+        return float(np.clip(psi, -self.psi_max, self.psi_max)), alpha, tgt
 
     def cross_track(self, pos):
         """Sai số ngang: khoảng cách từ vị trí THẬT tới điểm gần nhất trên đường."""
