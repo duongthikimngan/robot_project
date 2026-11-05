@@ -47,7 +47,7 @@ P0 = np.diag([0.02 ** 2, 0.02 ** 2, np.deg2rad(0.2) ** 2])   # xe xuất phát �
 SENSOR_EVERY = 2          # cảm biến chạy mỗi 2 bước (5 Hz)
 EKF_GATE = 9.21           # chi² 99%, 2 bậc tự do
 EKF_MIN_RANGE = 1.0       # m; bỏ landmark quá gần (tuyến tính hóa kém)
-LM_CONFIGS = {"lm3": (3, 8.0), "lm8": (8, 8.0), "lm8_r4": (8, 4.0)}   # (số landmark, tầm nhìn tối đa)
+LM_CONFIGS = {"lm3": (3, 8.0), "lm8": (8, 8.0), "lm8_r4": (8, 4.0), "lm3_r4": (3, 4.0)}   # (số landmark, tầm nhìn tối đa)
 DEMO_LM = np.array([[5, -3], [13, 5], [5, 13], [-3, 5], [5, 5], [12, 12], [-2, -2], [8, 2.0]])
 
 

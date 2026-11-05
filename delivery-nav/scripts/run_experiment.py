@@ -96,6 +96,8 @@ def main():
     df["noise"] = pd.Categorical(df["noise"], categories=a.noise, ordered=True)
 
     tag = f"_tu{a.tau_up:g}" if a.tau_up is not None else ""
+    if a.loc == ["dr"]:
+     tag += "_dronly"
     f_csv = out_dir / f"exp_{a.map}_{a.lm}_d{a.d:g}{tag}.csv"; df.to_csv(f_csv, index=False); print("Đã lưu", f_csv)
 
     metrics = ["success", "cte_rms", "cte_max", "miss_max", "steer_rate", "time",
