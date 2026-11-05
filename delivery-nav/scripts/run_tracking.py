@@ -111,6 +111,7 @@ def run_episode(path, junctions, d, law, kh=1.5, clearance=None, t_max=300.0, ad
     miss = np.full(len(junctions), np.inf)
     t_reach = np.full(len(junctions), np.nan)
     cte, clr, psis, vs, ds, traj = [], [], [], [], [], [car.q[:2].copy()]
+    extra = []
     assert loc in ("none", "dr", "ekf"), loc
     assert loc != "ekf" or sensor is not None, "loc='ekf' cần truyền sensor=make_sensor(...)"
     noise = LEVELS[noise_level]
@@ -148,8 +149,17 @@ def run_episode(path, junctions, d, law, kh=1.5, clearance=None, t_max=300.0, ad
         th_err.append(float(np.arctan2(np.sin(q_hat[2] - car.q[2]), np.cos(q_hat[2] - car.q[2]))))   # <<< MỚI
         if ekf is not None:
             sig_l.append(float(np.sqrt(ekf.P[0, 0] + ekf.P[1, 1]))); nees_l.append(nees(ekf.q, car.q, ekf.P))
+            P_matrix = ekf.P
         else:
             sig_l.append(0.0); nees_l.append(0.0)
+            P_matrix = np.zeros((3, 3))
+        
+        extra.append([
+            car.q[0], car.q[1], car.q[2],      # pose THẬT x, y, θ
+            q_hat[2],                          # θ ước lượng cùng nguồn với x̂, ŷ ở cột 5, 6
+            P_matrix[0, 0], P_matrix[1, 1], P_matrix[2, 2]  # phương sai (x, y, θ) trong P
+        ])
+
         dist = np.hypot(*(junctions - pos).T)
         miss = np.minimum(miss, dist)
         new = np.isnan(t_reach) & (dist < R_REACH)
@@ -189,9 +199,9 @@ def run_episode(path, junctions, d, law, kh=1.5, clearance=None, t_max=300.0, ad
                rej_frac=round(ekf.n_rejected / max(ekf.n_used + ekf.n_rejected, 1), 3) if ekf is not None else 0.0,   # <<< MỚI
                miss_idx=int(np.argmax(miss)),                                                    # <<< MỚI: điểm giao hụt nặng nhất
                missed=" ".join(str(i) for i in np.where(miss >= R_REACH)[0]))                    # <<< MỚI: các điểm giao bị hụt
-    # log: t, d, cte, psi, v, x_hat, y_hat, loc_err, sigma_xy, nees, th_err
+    # log: t, d, cte, psi, v, x_hat, y_hat, loc_err, sigma_xy, nees, th_err, + 7 cột extra
     log = np.c_[np.arange(1, len(ds) + 1) * DT, ds, cte, psis, vs, np.array(traj_hat)[1:],
-                loc_err, sig_l, nees_l, th_err]                                                  # <<< MỚI: thêm cột th_err (cột 10)
+                loc_err, sig_l, nees_l, th_err, np.array(extra)]                                                  # <<< MỚI: thêm 7 cột extra vào cuối log
     return out, np.array(traj), log
 def main():
     ap = argparse.ArgumentParser()
@@ -240,7 +250,7 @@ def main():
         print(r)
         if a.adaptive:
             np.savetxt(out_dir / f"log_{name}_{a.law}{suffix}.csv", log, delimiter=",",
-                       header="t,d,cte,psi,v,x_hat,y_hat,loc_err,sigma_xy,nees", comments="")
+                       header="t,d,cte,psi,v,x_hat,y_hat,loc_err,sigma_xy,nees,th_err,true_x,true_y,true_theta,theta_hat,P_xx,P_yy,P_theta_theta", comments="")
     with open(out_dir / f"tracking_{name}_{a.law}{suffix}.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
 

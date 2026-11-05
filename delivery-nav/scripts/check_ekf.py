@@ -33,6 +33,9 @@ def phase_b(a, name, path, junctions, clearance, out_dir):
     lm_cfg = a.lm[0]
     res = {loc: one(path, junctions, clearance, name, loc, a.noise_b, a.seed_b, lm_cfg, a.adaptive)
            for loc in ("dr", "ekf")}
+    
+    
+
     fig, ax = plt.subplots(1, 2, figsize=(14, 6), gridspec_kw=dict(width_ratios=[1.3, 1]))
     ax[0].plot(*path.T, "k--", lw=1, label="tuyến tham chiếu")
     ax[0].plot(*res["ekf"][1].T, "b", lw=1.8, label="quỹ đạo THẬT (xe điều khiển bằng EKF)")
@@ -46,18 +49,44 @@ def phase_b(a, name, path, junctions, clearance, out_dir):
     ax[0].set_aspect("equal"); ax[0].grid(alpha=.3); ax[0].legend(fontsize=8)
     ax[0].set_title(f"Pha B: {name}, nhiễu {a.noise_b}, seed {a.seed_b}, {lm_cfg}")
     for loc, c in (("dr", "g"), ("ekf", "r")):
-        lg = res[loc][2]
-        ax[1].plot(lg[:, 0], lg[:, 7], c, label=f"sai số định vị {loc.upper()} (m)")
-        ax[1].plot(lg[:, 0], 2 * lg[:, 8], c + ":", label=f"2·σ_xy {loc.upper()}")
+        lg_loc = res[loc][2]
+        ax[1].plot(lg_loc[:, 0], lg_loc[:, 7], c, label=f"sai số định vị {loc.upper()} (m)")
+        ax[1].plot(lg_loc[:, 0], 2 * lg_loc[:, 8], c + ":", label=f"2·σ_xy {loc.upper()}")
     ax[1].set_xlabel("t (s)"); ax[1].grid(alpha=.3); ax[1].legend(fontsize=8)
     ax[1].set_title("Sai số thật so với dải ±2σ từ ma trận P")
     plt.tight_layout()
     f = out_dir / f"phaseB_{name}_{a.noise_b}_seed{a.seed_b}_{lm_cfg}{'_adaptive' if a.adaptive else ''}.png"
     plt.savefig(f, dpi=130); print("Đã lưu", f)
+    if res["ekf"][2].shape[1] >= 16:
+        phase_b_components(res["ekf"][2], f"{name}_{a.noise_b}_seed{a.seed_b}_{lm_cfg}", out_dir)
     for loc in ("dr", "ekf"):
         r = res[loc][0]
         print(loc, {k: r[k] for k in ("success", "loc_err_end", "loc_err_rms", "nees_mean", "nees_in95", "n_obs", "n_rej")})
 
+def phase_b_components(lg, tag, out_dir):
+    """Sai số x, y, θ theo thời gian cùng ±2σ từ diag(P) (EKF, một seed).
+    Cột log: 5, 6 = x̂, ŷ; 11-13 = x, y, θ thật; 14 = θ ước lượng; 15-17 = Pxx, Pyy, Pθθ."""
+    t = lg[:, 0]
+    q_true = lg[:, 11:14]
+    q_est = np.c_[lg[:, 5], lg[:, 6], lg[:, 14]]
+    sig = np.sqrt(lg[:, 15:18])
+    dth = (lg[:, 14] - lg[:, 13] + np.pi) % (2 * np.pi) - np.pi
+    print("kiểm tra cột (phải là True True True):",
+          np.allclose(np.hypot(lg[:, 5] - lg[:, 11], lg[:, 6] - lg[:, 12]), lg[:, 7], atol=1e-4),
+          np.allclose(dth, lg[:, 10], atol=1e-4),
+          bool((lg[:, 15:18] >= 0).all()))
+    err = q_est - q_true
+    err[:, 2] = (err[:, 2] + np.pi) % (2 * np.pi) - np.pi
+    fig, ax = plt.subplots(3, 1, sharex=True, figsize=(10, 7))
+    for i, nm in enumerate(["x (m)", "y (m)", "θ (rad)"]):
+        ax[i].plot(t, err[:, i], lw=1)
+        ax[i].fill_between(t, -2 * sig[:, i], 2 * sig[:, i], alpha=.25, label="±2σ (từ P)")
+        ax[i].set_ylabel("sai số " + nm); ax[i].grid(alpha=.3)
+        print(nm, "trong ±2σ:", round(float(np.mean(np.abs(err[:, i]) <= 2 * sig[:, i])), 3))
+    ax[0].legend(); ax[-1].set_xlabel("t (s)")
+    plt.tight_layout()
+    f = out_dir / f"ekf_consistency_{tag}.png"
+    plt.savefig(f, dpi=130); print("Đã lưu", f)
 
 def paired_tests(df, metric="loc_err_rms"):
     """Wilcoxon ghép cặp EKF so với DR (cùng seed, cùng chuỗi nhiễu odometry) theo từng (cfg, noise)."""
@@ -76,7 +105,6 @@ def paired_tests(df, metric="loc_err_rms"):
                          median_gain=diff.median(), ekf_better_frac=(diff > 0).mean(), p_wilcoxon=pv))
     
     res_df = pd.DataFrame(rows)
-    # Chỉ làm tròn các cột số khác (không làm tròn cột p_wilcoxon ở đây để giữ nguyên giá trị cho float_format)
     num_cols = res_df.select_dtypes(include=[np.number]).columns.drop("p_wilcoxon", errors="ignore")
     res_df[num_cols] = res_df[num_cols].round(4)
     return res_df
@@ -121,7 +149,7 @@ def main():
                loc_err_end=("loc_err_end", "mean"), loc_err_rms=("loc_err_rms", "mean"),
                nees_mean=("nees_mean", "mean"), nees_in95=("nees_in95", "mean"),
                n_obs=("n_obs", "mean"), n_rej=("n_rej", "mean"), collisions=("collisions", "mean"))
-    if "loc_err_max" in df.columns:                      # nếu run_episode có trả về sai số lớn nhất
+    if "loc_err_max" in df.columns:
         agg["loc_err_max"] = ("loc_err_max", "mean")
     g = df.groupby(["cfg", "noise", "loc"], observed=True).agg(**agg).round(3)
     pd.set_option("display.width", 220, "display.max_columns", 30)
