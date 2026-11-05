@@ -1,9 +1,15 @@
+
 import sys, os
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)                          # để import src.*
+sys.path.insert(0, os.path.join(ROOT, "scripts"))  # để import run_tracking
 import numpy as np
+import run_tracking as rt
+
 from src.vehicle import Bicycle
 from src.pursuit import PurePursuit
 from src.pid import PID, simc_pi
+
 
 ok = True
 def check(name, cond, info=""):
@@ -60,4 +66,12 @@ for L in [1.0, 2.5]:
         for law in ["geometric", "slide"]:
             c = drive(line, (0, 2.0, 0.0), d=d, law=law, L=L, T=80)
             print(f"  L={L} d={d:2d} {law:9s}: CTE cuối {c[-200:].max():.3f} m, dao động {np.ptp(c[-200:]):.3f}")
+
+# 7) Kiểm tra bộ thích nghi (adaptive look-ahead)
+path_test, junctions_test, clearance_test = rt.get_route("corridor")
+r_adapt, _, _ = rt.run_episode(path_test, junctions_test, 1.5, "geometric", clearance=clearance_test, loc="dr", noise_level="low", seed=0, adaptive=rt.ADAPT)
+check("adaptive look-ahead: chạy thành công", r_adapt["success"] == 1, f"success={r_adapt['success']}")
+check("adaptive look-ahead: hoàn thành có di chuyển", r_adapt["time"] > 0, f"time={r_adapt['time']:.2f}s")
+check("adaptive look-ahead: giữ sai số trong giới hạn", r_adapt["cte_rms"] < 1.0, f"cte_rms={r_adapt['cte_rms']:.3f}m")
+
 print("\nTẤT CẢ PASS" if ok else "\nCÓ LỖI")

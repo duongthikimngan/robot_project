@@ -74,7 +74,12 @@ def paired_tests(df, metric="loc_err_rms"):
             pv = float("nan")
         rows.append(dict(cfg=cfg, noise=noise, n=len(diff), dr_mean=p["dr"].mean(), ekf_mean=p["ekf"].mean(),
                          median_gain=diff.median(), ekf_better_frac=(diff > 0).mean(), p_wilcoxon=pv))
-    return pd.DataFrame(rows).round(4)
+    
+    res_df = pd.DataFrame(rows)
+    # Chỉ làm tròn các cột số khác (không làm tròn cột p_wilcoxon ở đây để giữ nguyên giá trị cho float_format)
+    num_cols = res_df.select_dtypes(include=[np.number]).columns.drop("p_wilcoxon", errors="ignore")
+    res_df[num_cols] = res_df[num_cols].round(4)
+    return res_df
 
 
 def main():
@@ -134,7 +139,7 @@ def main():
         print(fail[cols].to_string(index=False))
 
     print("\nWilcoxon ghép cặp (DR trừ EKF, loc_err_rms; median_gain > 0 nghĩa là EKF tốt hơn):")
-    print(paired_tests(df).to_string(index=False))
+    print(paired_tests(df).to_string(index=False, float_format=lambda x: f"{x:.3g}"))
 
 
 if __name__ == "__main__":
