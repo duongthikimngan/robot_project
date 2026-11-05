@@ -1,0 +1,28 @@
+== lm8_r4: 180 cap (ky vong 180 = 3 noise x 2 tracker x 30 seed)
+  adaptive high  succ EKF 0.93 DR 0.10 | b=25 c=0 McNemar p=0.0000 | loc_err_rms EKF 0.24 DR 1.30 Wilcoxon p=3.7e-09
+  adaptive low   succ EKF 1.00 DR 0.97 | b=1 c=0 McNemar p=1.0000 | loc_err_rms EKF 0.05 DR 0.18 Wilcoxon p=1.7e-06
+  adaptive mid   succ EKF 1.00 DR 0.53 | b=14 c=0 McNemar p=0.0001 | loc_err_rms EKF 0.12 DR 0.51 Wilcoxon p=1.9e-09
+  fixed    high  succ EKF 0.87 DR 0.10 | b=23 c=0 McNemar p=0.0000 | loc_err_rms EKF 0.24 DR 1.31 Wilcoxon p=3.7e-09
+  fixed    low   succ EKF 1.00 DR 0.97 | b=1 c=0 McNemar p=1.0000 | loc_err_rms EKF 0.05 DR 0.18 Wilcoxon p=1.7e-06
+  fixed    mid   succ EKF 1.00 DR 0.53 | b=14 c=0 McNemar p=0.0001 | loc_err_rms EKF 0.12 DR 0.51 Wilcoxon p=1.9e-09
+== lm8: 180 cap (ky vong 180 = 3 noise x 2 tracker x 30 seed)
+  adaptive high  succ EKF 0.97 DR 0.10 | b=26 c=0 McNemar p=0.0000 | loc_err_rms EKF 0.09 DR 1.30 Wilcoxon p=1.9e-09
+  adaptive low   succ EKF 1.00 DR 0.97 | b=1 c=0 McNemar p=1.0000 | loc_err_rms EKF 0.03 DR 0.18 Wilcoxon p=1.9e-09
+  adaptive mid   succ EKF 1.00 DR 0.53 | b=14 c=0 McNemar p=0.0001 | loc_err_rms EKF 0.05 DR 0.51 Wilcoxon p=1.9e-09
+  fixed    high  succ EKF 0.97 DR 0.10 | b=26 c=0 McNemar p=0.0000 | loc_err_rms EKF 0.09 DR 1.31 Wilcoxon p=1.9e-09
+  fixed    low   succ EKF 1.00 DR 0.97 | b=1 c=0 McNemar p=1.0000 | loc_err_rms EKF 0.03 DR 0.18 Wilcoxon p=1.9e-09
+  fixed    mid   succ EKF 1.00 DR 0.53 | b=14 c=0 McNemar p=0.0001 | loc_err_rms EKF 0.05 DR 0.51 Wilcoxon p=1.9e-09
+== lm3_r4: 180 cap (ky vong 180 = 3 noise x 2 tracker x 30 seed)
+  adaptive high  succ EKF 0.27 DR 0.10 | b=6 c=1 McNemar p=0.1250 | loc_err_rms EKF 0.64 DR 1.30 Wilcoxon p=1e-07
+  adaptive low   succ EKF 0.97 DR 0.97 | b=0 c=0 McNemar p=1.0000 | loc_err_rms EKF 0.10 DR 0.18 Wilcoxon p=2.4e-06
+  adaptive mid   succ EKF 0.87 DR 0.53 | b=11 c=1 McNemar p=0.0063 | loc_err_rms EKF 0.27 DR 0.51 Wilcoxon p=1.3e-08
+  fixed    high  succ EKF 0.30 DR 0.10 | b=7 c=1 McNemar p=0.0703 | loc_err_rms EKF 0.65 DR 1.31 Wilcoxon p=1e-07
+  fixed    low   succ EKF 0.97 DR 0.97 | b=0 c=0 McNemar p=1.0000 | loc_err_rms EKF 0.10 DR 0.18 Wilcoxon p=2.4e-06
+  fixed    mid   succ EKF 0.87 DR 0.53 | b=11 c=1 McNemar p=0.0063 | loc_err_rms EKF 0.27 DR 0.51 Wilcoxon p=2.6e-06
+== lm3: 180 cap (ky vong 180 = 3 noise x 2 tracker x 30 seed)
+  adaptive high  succ EKF 0.70 DR 0.10 | b=18 c=0 McNemar p=0.0000 | loc_err_rms EKF 0.41 DR 1.30 Wilcoxon p=1.9e-09
+  adaptive low   succ EKF 1.00 DR 0.97 | b=1 c=0 McNemar p=1.0000 | loc_err_rms EKF 0.07 DR 0.18 Wilcoxon p=1.7e-06
+  adaptive mid   succ EKF 1.00 DR 0.53 | b=14 c=0 McNemar p=0.0001 | loc_err_rms EKF 0.18 DR 0.51 Wilcoxon p=1.9e-09
+  fixed    high  succ EKF 0.70 DR 0.10 | b=18 c=0 McNemar p=0.0000 | loc_err_rms EKF 0.40 DR 1.31 Wilcoxon p=1.9e-09
+  fixed    low   succ EKF 1.00 DR 0.97 | b=1 c=0 McNemar p=1.0000 | loc_err_rms EKF 0.07 DR 0.18 Wilcoxon p=1.9e-09
+  fixed    mid   succ EKF 1.00 DR 0.53 | b=14 c=0 McNemar p=0.0001 | loc_err_rms EKF 0.18 DR 0.51 Wilcoxon p=1.9e-09
