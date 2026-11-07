@@ -151,3 +151,10 @@ Bicycle, LandmarkMap, RangeBearingSensor, EKF (from roboticstoolbox)
   cổng chi² (chỉ nhóm có; RTB không có trong step()); che khuất bản đồ (nhóm có; docstring RTB không nhắc).
 - Chưa làm: lớp 2 (chạy EKF nhóm trên kịch bản RVC3) và lớp 3 (30 seed mỗi bên).
 - Hạn chế: chưa đọc phần thân reading() sau dòng 440 và hàng thứ ba của Fv.
+## <ngày> | <tên> | Đối chiếu RTB, lớp 2-3 (phát lại dữ liệu RTB, 30 seed)
+- Script: baseline/rtb_export.py (môi trường RVC3), scripts/compare_rtb.py. Kết quả: baseline/rtb_compare_result.txt
+- Cùng dữ liệu RTB (20 landmark, tầm 4 m, ±90°), V, W hằng số, gate=None, min_range=0.
+- Mô hình Euler: chênh x_est 3.6e-15, chênh P 5.6e-16 so với RTB -> cài đặt đúng.
+- Mô hình trung điểm: sai số cuối trung vị 0.054 (RTB 0.040), trong ±2σ 0.79 (0.92), NEES trung vị 3.58 (2.46).
+  Chênh do hướng tích phân; dữ liệu RTB sinh theo Euler (suy luận, chưa kiểm).
+- Hạn chế: không kiểm cổng χ² và min_range; kịch bản khác hành lang của nhóm.
