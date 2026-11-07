@@ -96,6 +96,10 @@ def part_gate(path, J, clr, name, lm, noise, seeds):
     out = []
     for g in (rt.EKF_GATE, 13.82, None):
         rs = pd.DataFrame([run_one(path, J, clr, name, lm, noise, s, gate=g, default_gate=False) for s in range(seeds)])
+        if "seed" not in rs.columns:
+            rs.insert(0, "seed", range(len(rs)))
+        gname = "off" if g is None else format(g, "g")
+        rs.to_csv(OUT / f"diag_gate_seeds_{name}_{lm}_{noise}_{gname}.csv", index=False)
         out.append(dict(gate="tắt" if g is None else f"{g:g}", success=round(rs.success.mean(), 3),
                         loc_err_rms=round(rs.loc_err_rms.mean(), 3), loc_err_rms_med=round(rs.loc_err_rms.median(), 3),
                         nees_mean=round(rs.nees_mean.mean(), 2), n_obs=round(rs.n_obs.mean(), 0), n_rej=round(rs.n_rej.mean(), 1)))
