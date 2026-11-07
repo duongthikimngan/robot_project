@@ -132,7 +132,7 @@ Bicycle, LandmarkMap, RangeBearingSensor, EKF (from roboticstoolbox)
 - NEES trung bình bỏ lượt lớn nhất: lm3 high 4,75 / 4,77 / 6,58 (tắt cổng xấu hơn);
   lm8 high 2,97 / 2,87 / 2,86 (nhất quán). Sai số cuối trung vị 0,34-0,36 m (lm3), 0,18-0,20 m (lm8).
 - Kết luận: cổng không đổi kết quả điển hình, chỉ chặn đuôi xấu; chọn giữ 9,21.
-## <11/7/2026> | <Ngan> | Tóm tắt thí nghiệm cổng EKF (EKF_GATE = 9,21 / 13,82 / tắt), corridor
+## <7/11/2026> | <Ngan> | Tóm tắt thí nghiệm cổng EKF (EKF_GATE = 9,21 / 13,82 / tắt), corridor
 - Script: diag_lm3r4.py --part gate (ghi theo seed: diag_gate_seeds_*.csv), compare_gate_seeds.py,
   gate_summary.py, classify_failures.py
 - Thành công (9,21 / 13,82 / tắt): lm3 mid 26/25/25; lm3 high 9/8/8; lm8 high 26/28/28; tổng 61/61/61
@@ -143,3 +143,11 @@ Bicycle, LandmarkMap, RangeBearingSensor, EKF (from roboticstoolbox)
 - Kết luận: cổng không đổi kết quả điển hình, chỉ chặn đuôi xấu; giữ 9,21 cho kết quả chính.
 - Cảnh báo: ngưỡng NEES 4,5 vượt ở 13% lượt (lm3 mid) và 7% (lm8 high): có mức nền; chọn sau khi có dữ liệu.
 - Tag: v0.7-results (đóng băng kết quả GD4-5)
+## <7/11/2026> | <ngan> | Đối chiếu RTB, lớp 1 (so sánh cấu trúc mã)
+- Đã đọc: EKF.py dòng 768-990 (step), sensors.py (reading, h, Hx, Hw), Vehicle.py (f, Fx, Fv, 2 hàng đầu của Fv).
+- Giống nhau: cấu trúc dự đoán-hiệu chỉnh, dạng Joseph, Jacobian Hx, h, Hw = I, chuẩn hóa góc.
+- Khác nhau: hướng tích phân (nhóm: trung điểm; RTB: đầu bước); V (nhóm: theo từng bước; RTB: cố định);
+  số quan sát mỗi bước (nhóm: mọi landmark thấy được; RTB: một landmark ngẫu nhiên);
+  cổng chi² (chỉ nhóm có; RTB không có trong step()); che khuất bản đồ (nhóm có; docstring RTB không nhắc).
+- Chưa làm: lớp 2 (chạy EKF nhóm trên kịch bản RVC3) và lớp 3 (30 seed mỗi bên).
+- Hạn chế: chưa đọc phần thân reading() sau dòng 440 và hàng thứ ba của Fv.
