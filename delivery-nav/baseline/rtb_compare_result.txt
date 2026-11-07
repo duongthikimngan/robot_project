@@ -1,0 +1,11 @@
+30 seed
+
+Chênh |x_est nhóm - x_est RTB| lớn nhất theo bước (trung vị trên seed):
+  mô hình trung điểm: 5.040e-02
+  mô hình Euler     : 3.553e-15   (kỳ vọng ~1e-9 nếu hai bước cập nhật giống nhau)
+  chênh P tương đối (Euler): 5.642e-16
+
+bộ lọc                      sai số cuối  rms vị trí  trong ±2σ  NEES trung vị
+RTB                               0.040       0.083       0.92           2.46
+nhóm (trung điểm)                 0.054       0.082       0.79           3.58
+nhóm (Euler, như RTB)             0.040       0.083       0.92           2.46
