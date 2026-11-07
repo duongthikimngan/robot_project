@@ -126,3 +126,20 @@ Bicycle, LandmarkMap, RangeBearingSensor, EKF (from roboticstoolbox)
 - Sau: low 0.50, mid 1.48, high 3.84 m (muc tieu 0.5/1.5/4.0, +-30%)
 - c_th (deg/sqrt m): 0.095 / 0.285 / 0.76; k_d: 0.038 / 0.095 / 0.19
 - Kiem tra open: 0.76 / 2.25 / 5.81 m (tuyen dai hon, sai so lon hon)
+- NEES trung vị (cổng 9,21 / 13,82 / tắt): lm3 high 3,23 / 3,15 / 3,15; lm8 high 2,92 / 2,90 / 2,87
+  (kỳ vọng 3 cho bộ lọc nhất quán). Lượt điển hình nhất quán; NEES trung bình bị đuôi chi phối.
+- Tỉ lệ lượt NEES trung bình ≤ 4,5: lm3 high 0,70 / 0,67 / 0,67; lm8 high 0,93 ở cả ba thiết lập.
+- NEES trung bình bỏ lượt lớn nhất: lm3 high 4,75 / 4,77 / 6,58 (tắt cổng xấu hơn);
+  lm8 high 2,97 / 2,87 / 2,86 (nhất quán). Sai số cuối trung vị 0,34-0,36 m (lm3), 0,18-0,20 m (lm8).
+- Kết luận: cổng không đổi kết quả điển hình, chỉ chặn đuôi xấu; chọn giữ 9,21.
+## <11/7/2026> | <Ngan> | Tóm tắt thí nghiệm cổng EKF (EKF_GATE = 9,21 / 13,82 / tắt), corridor
+- Script: diag_lm3r4.py --part gate (ghi theo seed: diag_gate_seeds_*.csv), compare_gate_seeds.py,
+  gate_summary.py, classify_failures.py
+- Thành công (9,21 / 13,82 / tắt): lm3 mid 26/25/25; lm3 high 9/8/8; lm8 high 26/28/28; tổng 61/61/61
+- NEES trung vị: lm3 mid 2,74/2,66/2,68; lm3 high 3,23/3,15/3,15; lm8 high 2,92/2,90/2,87
+- Tỉ lệ lượt NEES trung bình ≤ 4,5: lm3 mid 0,87; lm3 high 0,70/0,67/0,67; lm8 high 0,93
+- NEES trung bình bỏ lượt lớn nhất: lm3 high 4,75/4,77/6,58 (tắt cổng xấu hơn); lm8 high 2,97/2,87/2,86
+- Sai số cuối trung vị (m): lm3 mid 0,10; lm3 high 0,34-0,36; lm8 high 0,18-0,20
+- Kết luận: cổng không đổi kết quả điển hình, chỉ chặn đuôi xấu; giữ 9,21 cho kết quả chính.
+- Cảnh báo: ngưỡng NEES 4,5 vượt ở 13% lượt (lm3 mid) và 7% (lm8 high): có mức nền; chọn sau khi có dữ liệu.
+- Tag: v0.7-results (đóng băng kết quả GD4-5)
